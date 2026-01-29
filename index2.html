@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Glitch Museum 🎭</title>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff006e;
+            --neon-cyan: #00f5ff;
+            --neon-yellow: #ffbe0b;
+            --deep-purple: #3a0ca3;
+            --dark-bg: #0a0a0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor-trail {
+            width: 10px;
+            height: 10px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            opacity: 0.6;
+        }
+
+        /* Glitch Background */
+        .glitch-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 245, 255, 0.03) 2px,
+                    rgba(0, 245, 255, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        /* Glitchy Title */
+        .title {
+            font-family: 'Righteous', cursive;
+            font-size: clamp(3rem, 10vw, 8rem);
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+        }
+
+        .title-main {
+            position: relative;
+            display: inline-block;
+            color: var(--neon-cyan);
+            text-shadow: 
+                0 0 10px var(--neon-cyan),
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-cyan);
+            animation: flicker 3s infinite alternate;
+        }
+
+        .title-main::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px;
+            text-shadow: -2px 0 var(--neon-pink);
+            top: 0;
+            color: var(--neon-pink);
+            overflow: hidden;
+            animation: glitch-1 2.5s infinite linear alternate-reverse;
+        }
+
+        .title-main::after {
+            content: attr(data-text);
+            position: absolute;
+            left: -2px;
+            text-shadow: 2px 0 var(--neon-yellow);
+            top: 0;
+            color: var(--neon-yellow);
+            overflow: hidden;
+            animation: glitch-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 10px var(--neon-cyan),
+                    0 0 20px var(--neon-cyan),
+                    0 0 40px var(--neon-cyan);
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes glitch-1 {
+            0% { clip-path: inset(40% 0 61% 0); }
+            20% { clip-path: inset(92% 0 1% 0); }
+            40% { clip-path: inset(43% 0 1% 0); }
+            60% { clip-path: inset(25% 0 58% 0); }
+            80% { clip-path: inset(54% 0 7% 0); }
+            100% { clip-path: inset(58% 0 43% 0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { clip-path: inset(65% 0 31% 0); }
+            20% { clip-path: inset(45% 0 40% 0); }
+            40% { clip-path: inset(13% 0 71% 0); }
+            60% { clip-path: inset(70% 0 22% 0); }
+            80% { clip-path: inset(36% 0 42% 0); }
+            100% { clip-path: inset(8% 0 80% 0); }
+        }
+
+        /* Subtitle with typewriter effect */
+        .subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--neon-yellow);
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            min-height: 40px;
+            font-weight: 700;
+        }
+
+        /* Interactive Cards */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(58, 12, 163, 0.3), rgba(0, 0, 0, 0.5));
+            border: 2px solid var(--neon-cyan);
+            padding: 30px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 245, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 
+                0 0 30px var(--neon-cyan),
+                0 0 60px var(--neon-pink);
+            border-color: var(--neon-pink);
+        }
+
+        .card-emoji {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card:nth-child(2) .card-emoji {
+            animation-delay: 0.5s;
+        }
+
+        .card:nth-child(3) .card-emoji {
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        .card-title {
+            font-family: 'Righteous', cursive;
+            font-size: 1.5rem;
+            color: var(--neon-yellow);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .card-text {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        /* Crazy Button */
+        .crazy-btn {
+            font-family: 'Righteous', cursive;
+            background: transparent;
+            border: 3px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin: 30px 0;
+        }
+
+        .crazy-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: var(--neon-pink);
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .crazy-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .crazy-btn:hover {
+            color: white;
+            box-shadow: 
+                0 0 20px var(--neon-pink),
+                0 0 40px var(--neon-pink);
+            transform: scale(1.1);
+        }
+
+        .crazy-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Particle System */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9997;
+        }
+
+        @keyframes particle-rise {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stats Counter */
+        .stats {
+            display: flex;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid var(--neon-yellow);
+            border-radius: 15px;
+            min-width: 150px;
+            background: rgba(255, 190, 11, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 0 30px var(--neon-yellow);
+        }
+
+        .stat-number {
+            font-family: 'Righteous', cursive;
+            font-size: 2.5rem;
+            color: var(--neon-yellow);
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Easter Egg Zone */
+        .secret-zone {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--deep-purple);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        .secret-zone:hover {
+            transform: scale(1.2) rotate(180deg);
+            box-shadow: 0 0 40px var(--neon-cyan);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--deep-purple), #1a0340);
+            padding: 50px;
+            border-radius: 30px;
+            border: 3px solid var(--neon-pink);
+            text-align: center;
+            max-width: 500px;
+            animation: modalPop 0.5s ease;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .modal-emoji {
+            font-size: 5rem;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-text {
+            font-family: 'Righteous', cursive;
+            font-size: 2rem;
+            color: var(--neon-yellow);
+            margin: 20px 0;
+        }
+
+        .close-btn {
+            background: var(--neon-pink);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Righteous', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 50px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--neon-pink);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 3rem;
+                letter-spacing: 4px;
+            }
+            
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-trail"></div>
+    <div class="glitch-bg"></div>
+
+    <div class="container">
+        <h1 class="title">
+            <span class="title-main" data-text="THE GLITCH">THE GLITCH</span>
+        </h1>
+        
+        <div class="subtitle" id="typewriter"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="visitors">0</div>
+                <div class="stat-label">Brave Souls</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="clicks">0</div>
+                <div class="stat-label">Clicks Made</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="chaos">0</div>
+                <div class="stat-label">Chaos Level</div>
+            </div>
+        </div>
+
+        <div class="card-container">
+            <div class="card" onclick="cardClick(1)">
+                <span class="card-emoji">🎪</span>
+                <h3 class="card-title">Enter the Circus</h3>
+                <p class="card-text">Where logic goes to retire and chaos throws the party!</p>
+            </div>
+            <div class="card" onclick="cardClick(2)">
+                <span class="card-emoji">🚀</span>
+                <h3 class="card-title">Launch Absurdity</h3>
+                <p class="card-text">Blast off into the unknown realms of questionable decisions!</p>
+            </div>
+            <div class="card" onclick="cardClick(3)">
+                <span class="card-emoji">🎭</span>
+                <h3 class="card-title">Reality? Never Heard of It</h3>
+                <p class="card-text">Join us in pretending everything makes perfect sense!</p>
+            </div>
+        </div>
+
+        <button class="crazy-btn" onclick="unleashChaos()">
+            <span>UNLEASH CHAOS</span>
+        </button>
+    </div>
+
+    <div class="secret-zone" onclick="openSecret()">
+        🤫
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-emoji">🎉</div>
+            <p class="modal-text">You Found The Secret!</p>
+            <p class="card-text">Congratulations! You're officially too curious for your own good. We like that.</p>
+            <button class="close-btn" onclick="closeSecret()">Got It!</button>
+        </div>
+    </div>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorTrail = document.querySelector('.cursor-trail');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorTrail.style.left = e.clientX + 'px';
+                cursorTrail.style.top = e.clientY + 'px';
+            }, 100);
+        });
+
+        // Typewriter Effect
+        const phrases = [
+            "WHERE NORMAL GOES TO DIE 💀",
+            "404: SANITY NOT FOUND 🤪",
+            "CERTIFIED WEIRD SINCE 2025 ✨",
+            "YOUR FAVORITE DIGITAL FEVER DREAM 🌈"
+        ];
+        
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function typeWriter() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                typewriterEl.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterEl.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                setTimeout(() => isDeleting = true, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+
+            const speed = isDeleting ? 50 : 100;
+            setTimeout(typeWriter, speed);
+        }
+
+        typeWriter();
+
+        // Stats Counter
+        let visitors = Math.floor(Math.random() * 9000) + 1000;
+        let clicks = 0;
+        let chaos = 0;
+
+        document.getElementById('visitors').textContent = visitors;
+
+        function updateStats() {
+            clicks++;
+            chaos = Math.floor(clicks * 1.5);
+            document.getElementById('clicks').textContent = clicks;
+            document.getElementById('chaos').textContent = chaos + '%';
+        }
+
+        // Particle System
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = ['✨', '💫', '⭐', '🌟', '💥', '🎆'][Math.floor(Math.random() * 6)];
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.fontSize = Math.random() * 30 + 20 + 'px';
+            particle.style.animation = `particle-rise ${Math.random() * 2 + 2}s ease-out forwards`;
+            document.body.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 4000);
+        }
+
+        // Card Click
+        function cardClick(num) {
+            updateStats();
+            const messages = [
+                "Welcome to the circus! 🎪 Things are about to get weird!",
+                "Blast off! 🚀 Next stop: Absurdity Station!",
+                "Reality.exe has stopped working! 🎭 Please restart your brain!"
+            ];
+            
+            alert(messages[num - 1]);
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    createParticle(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 100);
+            }
+        }
+
+        // Unleash Chaos
+        function unleashChaos() {
+            updateStats();
+            
+            // Create massive particle explosion
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createParticle(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 50);
+            }
+
+            // Random color changes
+            const colors = ['#ff006e', '#00f5ff', '#ffbe0b', '#8338ec', '#06ffa5'];
+            let colorIndex = 0;
+            const interval = setInterval(() => {
+                document.documentElement.style.setProperty('--neon-cyan', colors[colorIndex % colors.length]);
+                colorIndex++;
+                if (colorIndex >= 20) clearInterval(interval);
+            }, 100);
+
+            // Shake the page
+            document.body.style.animation = 'shake 0.5s';
+            setTimeout(() => document.body.style.animation = '', 500);
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                20%, 40%, 60%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Secret Modal
+        function openSecret() {
+            updateStats();
+            document.getElementById('modal').classList.add('active');
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createParticle(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 50);
+            }
+        }
+
+        function closeSecret() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Click anywhere for particles
+        document.addEventListener('click', (e) => {
+            createParticle(e.clientX, e.clientY);
+        });
+
+        // Random chaos events
+        setInterval(() => {
+            const randomX = Math.random() * window.innerWidth;
+            const randomY = Math.random() * window.innerHeight;
+            createParticle(randomX, randomY);
+        }, 3000);
+    </script>
+</body>
+</html>
