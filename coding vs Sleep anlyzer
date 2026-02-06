@@ -1,0 +1,131 @@
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function App() {
+  const [dark, setDark] = useState(true);
+  const [sleep, setSleep] = useState("");
+  const [result, setResult] = useState(null);
+
+  /* ---------------- Sleep Analysis Logic ---------------- */
+  const analyzeSleep = () => {
+    if (!sleep) return;
+
+    const hrs = Number(sleep);
+
+    let data = {};
+
+    if (hrs >= 8) {
+      data = {
+        bugs: "0–2 🧘‍♂️",
+        coffee: "1 cup ☕",
+        mood: "Calm Developer 😎",
+        resign: "2%",
+      };
+    } else if (hrs >= 5) {
+      data = {
+        bugs: "5–12 🐛",
+        coffee: "3 cups ☕☕☕",
+        mood: "Slightly Angry 😤",
+        resign: "18%",
+      };
+    } else {
+      data = {
+        bugs: "Unlimited ♾️💀",
+        coffee: "Entire machine ☕🏭",
+        mood: "Existential Crisis 😭",
+        resign: "87%",
+      };
+    }
+
+    setResult(data);
+  };
+
+  /* ---------------- Theme ---------------- */
+  const theme = {
+    bg: dark
+      ? "bg-gradient-to-br from-black via-gray-900 to-black text-white"
+      : "bg-gradient-to-br from-yellow-100 via-white to-orange-100 text-black",
+
+    card: dark
+      ? "bg-gray-900 border-gray-700"
+      : "bg-white border-gray-200",
+
+    input: dark
+      ? "bg-black border-gray-700 text-white"
+      : "bg-white border-gray-300 text-black",
+
+    button:
+      "bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black",
+  };
+
+  return (
+    <div
+      className={`min-h-screen flex flex-col items-center justify-center p-6 font-sans transition-colors duration-700 ${theme.bg}`}
+    >
+      {/* Theme Toggle */}
+      <button
+        onClick={() => setDark(!dark)}
+        className={`fixed top-4 right-4 px-4 py-2 rounded-xl ${theme.button} font-semibold shadow-lg`}
+      >
+        {dark ? "☀️ Light" : "🌙 Dark"}
+      </button>
+
+      {/* Title */}
+      <motion.h1
+        initial={{ opacity: 0, y: -40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-4xl md:text-5xl font-bold text-center mb-4"
+      >
+        🛌 Sleep vs Coding Analyzer
+      </motion.h1>
+
+      <p className="opacity-70 mb-10 text-center">
+        Enter your sleep hours… we’ll predict your coding destiny 💻💀
+      </p>
+
+      {/* Input */}
+      <div className="flex gap-3 w-full max-w-xl mb-10">
+        <input
+          type="number"
+          value={sleep}
+          onChange={(e) => setSleep(e.target.value)}
+          placeholder="Hours you slept…"
+          className={`flex-1 p-3 border rounded-xl ${theme.input}`}
+        />
+
+        <button
+          onClick={analyzeSleep}
+          className={`px-6 rounded-xl font-semibold ${theme.button}`}
+        >
+          Analyze
+        </button>
+      </div>
+
+      {/* Result Cards */}
+      <div className="w-full max-w-xl space-y-4">
+        <AnimatePresence>
+          {result &&
+            Object.entries(result).map(([key, value], i) => (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className={`p-4 border rounded-xl shadow-lg ${theme.card}`}
+              >
+                <span className="capitalize font-semibold">
+                  {key}:
+                </span>{" "}
+                {value}
+              </motion.div>
+            ))}
+        </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-16 opacity-60 text-sm text-center">
+        ⚠️ Scientifically inaccurate but emotionally correct 😂
+      </footer>
+    </div>
+  );
+}
