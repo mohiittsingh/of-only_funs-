@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funny Page 😂</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      background: rgba(0,0,0,0.3);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      width: 60%;
+      max-width: 600px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #quote {
+      font-size: 1.4rem;
+      margin: 20px 0;
+      min-height: 60px;
+    }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      background: #ffcc00;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background: #ffdb4d;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>😂 Funny Quote Generator</h1>
+    <div id="quote">Click the button to laugh…</div>
+    <button onclick="generateQuote()">Make Me Laugh</button>
+  </div>
+
+  <script>
+    const quotes = [
+      "I’m not lazy… I’m on energy saving mode.",
+      "I followed my heart… it led me to the fridge.",
+      "My bed and I love each other, but my alarm clock is jealous.",
+      "I need 6 months of vacation, twice a year.",
+      "I’m not arguing, I’m just explaining why I’m right.",
+      "Life is short… smile while you still have teeth.",
+      "If stress burned calories, I’d be a supermodel.",
+      "I put the ‘Pro’ in procrastinate.",
+      "Brains are awesome. I wish everybody had one.",
+      "I woke up… and that was my workout.",
+      "Common sense is like deodorant. People who need it most never use it.",
+      "I’m on a seafood diet. I see food and I eat it."
+    ];
+
+    function generateQuote() {
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      document.getElementById("quote").innerText = quotes[randomIndex];
+    }
+  </script>
+</body>
+</html>
