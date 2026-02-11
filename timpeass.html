@@ -102,6 +102,8 @@
       <button onclick="copyQuote()">Copy</button>
       <button onclick="shareWhatsApp()">WhatsApp</button>
       <button onclick="getJokeAPI()">Live Joke</button>
+      <button onclick="saveFavorite()">⭐ Favorite</button>
+      <button onclick="showFavorites()">📂 View Favorites</button>
     </div>
 
     <div id="counter"></div>
@@ -165,6 +167,31 @@
       randomBackground();
       confettiEffect();
       updateCounter();
+
+    // ===== FAVORITES SYSTEM =====
+
+    function saveFavorite() {
+      const text = document.getElementById("quote").innerText;
+      if (!text) return;
+
+      let favs = JSON.parse(localStorage.getItem("favorites")) || [];
+      favs.push(text);
+      localStorage.setItem("favorites", JSON.stringify(favs));
+
+      alert("Saved to favorites ⭐");
+    }
+
+    function showFavorites() {
+      let favs = JSON.parse(localStorage.getItem("favorites")) || [];
+
+      if (favs.length === 0) {
+        alert("No favorites saved yet 😢");
+        return;
+      }
+
+      const list = favs.map((q,i)=>`${i+1}. ${q}`).join("\n\n");
+      alert("Your Favorite Quotes ⭐\n\n" + list);
+    }
 
       const arr = quotes[currentCategory];
       const text = arr[Math.floor(Math.random() * arr.length)];
@@ -244,3 +271,4 @@
   </script>
 </body>
 </html>
+
